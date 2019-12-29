@@ -1,0 +1,13 @@
+= Reveal.js Sample document
+:source-highlighter: highlightjs
+
+== Slide 1
+
+This is a slide
+
+== Slide 2 with some code
+
+[source,java]
+----
+System.out.println("Hello World");
+----

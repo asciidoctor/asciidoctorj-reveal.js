@@ -1,0 +1,35 @@
+dependencies {
+  testCompile ("org.asciidoctor:asciidoctorj:$asciidoctorJVersion") {
+    exclude group:'org.jruby'
+  }
+
+  testCompile "org.jruby:jruby-complete:$jrubyVersion"
+  testCompile "org.jsoup:jsoup:$jsoupVersion"
+
+
+  gems("rubygems:asciidoctor-revealjs:$asciidoctorRevealJsGemVersion") {
+    exclude module: 'asciidoctor'
+    exclude module: 'thread_safe'
+    // We must lock Prawn to 1.3.0 until AsciidoctorJ upgrades to JRuby 9.0.0.0
+    exclude module: 'concurrent-ruby'
+  }
+  gems "rubygems:thread_safe:$threadSafeGemVersion"
+
+}
+
+def gemFiles = fileTree("${project.buildDir}/.gems") {
+
+  include 'specifications/*.gemspec'
+  include 'gems/*/lib/**'
+  include 'gems/*/templates/**'
+
+}
+
+jrubyPrepare {
+  doLast {
+    copy { // bundles the gems inside this artifact
+      from gemFiles
+      into preparedGems
+    }
+  }
+}

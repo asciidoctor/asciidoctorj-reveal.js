@@ -1,0 +1,80 @@
+package org.asciidoctor;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
+import static org.asciidoctor.OptionsBuilder.options;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.Matchers.startsWith;
+import static org.junit.Assert.assertThat;
+
+public class WhenBackendIsRevealJs {
+
+    public static final String DOCUMENT = "= A document\n\n Test";
+
+    private Asciidoctor asciidoctor;
+
+
+    @Before
+    public void initAsciidoctor() {
+        this.asciidoctor = Asciidoctor.Factory.create();
+    }
+
+    @Test
+    public void should_create_simple_slides() throws IOException {
+        String filename = "sample";
+        File inputFile = new File("build/resources/test/" + filename + ".adoc");
+        File outputFile1 = new File(inputFile.getParentFile(), filename + ".html");
+        removeFileIfItExists(outputFile1);
+        asciidoctor.requireLibrary("asciidoctor-revealjs");
+        asciidoctor.requireLibrary("asciidoctor-diagram");
+        asciidoctor.convertFile(inputFile,
+            options()
+                .backend("revealjs")
+                .safe(SafeMode.UNSAFE)
+                .attributes(
+                    AttributesBuilder.attributes()
+                    .attribute("revealjsdir", "https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.7.0")
+                )
+                .get()
+        );
+
+        Document doc = Jsoup.parse(outputFile1, "UTF-8");
+
+        assertThat(outputFile1.exists(), is(true));
+
+        List<String> stylesheets = doc.head().getElementsByTag("link").stream()
+            .filter(element -> "stylesheet".equals(element.attr("rel")))
+            .map(element -> element.attr("href"))
+            .collect(toList());
+        assertThat(stylesheets, hasItem("https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.7.0/lib/css/zenburn.css"));
+
+        Element diagramSlide = doc.selectFirst("#diagram");
+        assertThat(diagramSlide, notNullValue());
+
+        Element diagram = diagramSlide.selectFirst("div.imageblock img");
+        assertThat(diagram, notNullValue());
+
+        assertThat(diagram.attr("src"), startsWith("data:image/svg+xml;base64,"));
+    }
+
+
+    private void removeFileIfItExists(File file) throws IOException {
+        if (file.exists()) {
+            if (!file.delete()) {
+                throw new IOException("can't delete file");
+            }
+        }
+    }
+
+}

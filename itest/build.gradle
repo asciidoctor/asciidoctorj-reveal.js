@@ -1,0 +1,19 @@
+dependencies {
+
+  testCompile ("org.asciidoctor:asciidoctorj:$asciidoctorJVersion")
+
+  testCompile "org.jsoup:jsoup:$jsoupVersion"
+
+  testRuntime ("org.asciidoctor:asciidoctorj-diagram:$asciidoctorJDiagramVersion")
+  testRuntime project(':asciidoctorj-revealjs')
+
+}
+
+jar.enabled = false
+if ( !project.hasProperty('skip.signing') ) {
+  signPom.enabled = false
+}
+
+configurations.all {
+  artifacts.clear()
+}

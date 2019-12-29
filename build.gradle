@@ -1,0 +1,175 @@
+/*
+    adding the plugin jars to the classpath to apply them later.
+    currently the new plugins DSL does apply them directly.
+    there are other limitations too. See https://docs.gradle.org/current/userguide/plugins.html#sec:plugins_block
+    we don't need to apply the jruby and bintray plugin on the rootProject.
+*/
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4"
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.0.0"
+    }
+}
+
+// modern plugins config
+plugins {
+  id 'com.github.jruby-gradle.base' version '2.0.0-alpha.7'
+}
+
+// TIP use -PpublishRelease=true to active release behavior regardless of the version
+status = project.hasProperty('publishRelease') && project.publishRelease.toBoolean() ?
+    'release' : ((version == 'unspecified' || version.endsWith('-SNAPSHOT')) ? 'snapshot' : 'release')
+
+ext {
+  buildDateTime = new Date()
+  (buildDateOnly, buildTimeOnly) = new java.text.SimpleDateFormat('yyyy-MM-dd HH:mm:ss.SSSZ').format(buildDateTime).split(' ')
+  statusIsRelease = (status == 'release')
+
+  // jar versions
+  arquillianVersion = '1.1.10.Final'
+  arquillianSpockVersion = '1.0.0.Beta3'
+  commonsioVersion = '2.4'
+  groovyVersion = '2.1.8'
+  guavaVersion = '18.0'
+  hamcrestVersion = '1.3'
+  jrubyVersion = '9.1.17.0'
+  junitVersion = '4.12'
+  jsoupVersion = '1.12.1'
+  saxonVersion = '9.5.1-6'
+  spockVersion = '0.7-groovy-2.0'
+  xmlMatchersVersion = '1.0-RC1'
+  pdfboxVersion = '1.8.10'
+
+  // gem versions
+  asciidoctorJVersion = project.hasProperty('asciidoctorJVersion') ? project.asciidoctorJVersion : '2.2.0'
+  asciidoctorJDiagramVersion = project.hasProperty('asciidoctorJDiagramVersion') ? project.asciidoctorJDiagramVersion : '2.0.0'
+  asciidoctorRevealJsGemVersion = project.hasProperty('asciidoctorRevealJsGemVersion') ? project.asciidoctorRevealJsGemVersion : project(':asciidoctorj-revealjs').version.replace('-', '.')
+  threadSafeGemVersion = '0.3.6'
+
+}
+
+allprojects {
+  group = 'org.asciidoctor'
+  defaultTasks 'check'
+}
+
+subprojects {
+  // NOTE applying Java plugin changes the status; take steps to preserve value
+  def _status = status
+  apply plugin: 'java'
+  apply plugin: 'groovy'
+  apply from: "$rootDir/gradle/providedConfiguration.gradle"
+
+  apply from: rootProject.file('gradle/signing.gradle')
+  if (!it.name.endsWith('itest')) {
+    apply from: rootProject.file('gradle/publish.gradle')
+  }
+  if (statusIsRelease) {
+    apply from: rootProject.file('gradle/deploy.gradle')
+  }
+
+  status = _status
+
+  // NOTE sourceCompatibility & targetCompatibility are set in gradle.properties to meet requirements of Gradle
+  // Must redefine here to work around a bug in the Eclipse plugin
+  sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
+
+  plugins.withType(JavaPlugin) {
+    project.tasks.withType(JavaCompile) { task ->
+      task.sourceCompatibility = project.sourceCompatibility
+      task.targetCompatibility = project.targetCompatibility
+    }
+    project.tasks.withType(GroovyCompile) { task ->
+      task.sourceCompatibility = project.sourceCompatibility
+      task.targetCompatibility = project.targetCompatibility
+    }
+  }
+
+  repositories {
+    if (project.hasProperty('useMavenLocal') && project.useMavenLocal.toBoolean()) {
+      mavenLocal()
+    }
+
+    jcenter()
+  }
+
+  dependencies {
+    testCompile "junit:junit:$junitVersion"
+    testCompile "org.hamcrest:hamcrest-library:$hamcrestVersion"
+    testCompile("org.spockframework:spock-core:$spockVersion") {
+      exclude group: 'org.hamcrest', module: 'hamcrest-core'
+    }
+    testCompile "org.codehaus.groovy:groovy-all:$groovyVersion"
+    testCompile "org.jboss.arquillian.junit:arquillian-junit-container:$arquillianVersion"
+    testCompile "org.jboss.arquillian.spock:arquillian-spock-container:$arquillianSpockVersion"
+
+  }
+
+  test {
+    forkEvery = 10
+    minHeapSize = '128m'
+    maxHeapSize = '1024m'
+    if (JavaVersion.current().isJava8Compatible()) {
+      jvmArgs '-XX:-UseGCOverheadLimit'
+    } else {
+      jvmArgs '-XX:MaxPermSize=256m', '-XX:-UseGCOverheadLimit'
+    }
+
+    testLogging {
+      exceptionFormat = 'full'
+      // events 'passed', 'failed', 'skipped', 'standard_out', 'standard_error'
+      // events 'standard_out', 'standard_error'
+      afterSuite { desc, result ->
+        if (!desc.parent && logger.infoEnabled) {
+          logger.info "Test results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} passed, ${result.failedTestCount} failed, ${result.skippedTestCount} skipped)"
+        }
+      }
+    }
+  }
+
+}
+
+configure(subprojects.findAll {it.name != 'itest'}) {
+  apply from: rootProject.file('gradle/versioncheck.gradle')
+
+  apply plugin: 'com.github.jruby-gradle.base'
+
+  repositories {
+    ruby.gems()
+  }
+
+  if (JavaVersion.current().isJava8Compatible()) {
+    javadoc {
+      // Oracle JDK8 likes to fail the build over spoiled HTML
+      options.addStringOption('Xdoclint:none', '-quiet')
+    }
+  }
+
+  ext {
+    // path to use for the prepared jruby gems
+    preparedGems = new File("$buildDir/preparedGems")
+  }
+
+  sourceSets {
+    main {
+      //let's register an output folder on the main SourceSet:
+      output.dir(preparedGems, builtBy: 'jrubyPrepare')
+      //it is now a part of the 'main' classpath and will be a part of the jar
+    }
+  }
+
+}
+
+configure(subprojects.findAll { it.name != 'itest'}) {
+
+  jruby {
+    jrubyVersion = jrubyVersion
+  }
+
+  // QUESTION is this the right place to insert this task dependency in the lifecycle?
+  // IMPORTANT The TMP or TEMP environment variable must be set for the gem install command to work on Windows
+  processResources.dependsOn jrubyPrepare
+}
