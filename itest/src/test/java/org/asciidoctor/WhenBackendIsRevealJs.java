@@ -1,5 +1,6 @@
 package org.asciidoctor;
 
+import org.hamcrest.Matchers;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -12,9 +13,9 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 import static org.asciidoctor.OptionsBuilder.options;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertThat;
 
@@ -57,7 +58,10 @@ public class WhenBackendIsRevealJs {
             .filter(element -> "stylesheet".equals(element.attr("rel")))
             .map(element -> element.attr("href"))
             .collect(toList());
-        assertThat(stylesheets, hasItem("https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.7.0/lib/css/zenburn.css"));
+        assertThat(stylesheets,
+            hasItems(
+                "https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.7.0/css/reveal.css",
+                "https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.7.0/css/theme/black.css"));
 
         Element diagramSlide = doc.selectFirst("#diagram");
         assertThat(diagramSlide, notNullValue());
