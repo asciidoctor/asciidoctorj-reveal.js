@@ -21,14 +21,13 @@ ifndef::awestruct[:uri-docs: http://asciidoctor.org/docs]
 :uri-repo: https://github.com/asciidoctor/asciidoctorj-reveal.js
 :uri-issues: {uri-repo}/issues
 :uri-discuss: http://discuss.asciidoctor.org
-:artifact-version: 2.0.1
+:artifact-version: 3.1.0-rc.1
 
 {uri-repo}[AsciidoctorJ Reveal.js] is a convenient repackaging of Asciidoctor Reveal.js for use with {uri-asciidoctorj}[AsciidoctorJ], which brings the Asciidoctor ecosystem to the JVM.
 
 // TODO: Fix URLs for badges once CI is configured
 ifdef::badges[]
-// image:https://img.shields.io/travis/asciidoctor/asciidoctorj/master.svg[Build Status (Travis CI), link=https://travis-ci.org/asciidoctor/asciidoctorj-pdf]
-// image:https://github.com/asciidoctor/asciidoctorj-pdf/workflows/Build%20Master/badge.svg?event=push[Build Status (Github Actions)]
+// image:https://github.com/asciidoctor/asciidoctorj-reveal/workflows/Build%20Master/badge.svg?event=push[Build Status (Github Actions)]
 endif::[]
 
 ifdef::awestruct,env-browser[]
@@ -66,4 +65,41 @@ asciidoctorj --classpath ..asciidoctor-revealjs.jar \
              -b revealjs \
              -a revealjsdir=https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.7.0 \
              document.adoc
+----
+
+== Creating slides with the Asciidoctor Maven Plugin
+
+To create slides using the Asciidoctor Maven Plugin you can use the following plugin configuration:
+
+[subs="+attributes"]
+[source,xml,indent="0"]
+----
+      <plugin>
+        <groupId>org.asciidoctor</groupId>
+        <artifactId>asciidoctor-maven-plugin</artifactId>
+        <version>2.0.0-RC.1</version>
+        <configuration>
+          <backend>revealjs</backend>
+          <requires>
+            <require>asciidoctor-revealjs</require>
+          </requires>
+          <attributes>
+            <revealjsdir>
+              https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.7.0
+            </revealjsdir>
+          </attributes>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.asciidoctor</groupId>
+            <artifactId>asciidoctorj</artifactId>
+            <version>2.2.0</version>
+          </dependency>
+          <dependency>
+            <groupId>org.asciidoctor</groupId>
+            <artifactId>asciidoctorj-revealjs</artifactId>
+            <version>{artifact-version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
 ----
