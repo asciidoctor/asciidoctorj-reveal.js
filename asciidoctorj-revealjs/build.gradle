@@ -32,3 +32,19 @@ jrubyPrepare {
     }
   }
 }
+
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+  archiveClassifier = 'sources'
+  from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+  archiveClassifier = 'javadoc'
+  from javadoc.destinationDir
+}
+
+artifacts {
+  archives sourcesJar
+  archives javadocJar
+}
