@@ -17,12 +17,15 @@ jobs:
       matrix:
         java:
           - '1.8'
-          - '11.0.5'
+          - '11'
         os:
           - ubuntu-latest
           - macos-latest
+          - windows-latest
         exclude:
           - os: macos-latest
+            java: '1.8'
+          - os: windows-latest
             java: '1.8'
     runs-on: ${{ matrix.os }}
     steps:

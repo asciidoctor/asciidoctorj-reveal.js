@@ -55,7 +55,8 @@ public class WhenBackendIsRevealJs {
             .filter(element -> "stylesheet".equals(element.attr("rel")))
             .map(element -> element.attr("href"))
             .collect(toList());
-        assertThat(stylesheets, hasItem("https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.7.0/lib/css/zenburn.css"));
+
+        assertThat(stylesheets, hasItem("https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.7.0/css/theme/black.css"));
 
         Element firstChild = doc.body().children().first();
         assertThat(firstChild.className(), containsString("reveal"));
