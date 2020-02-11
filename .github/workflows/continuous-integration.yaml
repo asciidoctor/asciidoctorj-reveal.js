@@ -37,7 +37,7 @@ jobs:
           java-version: ${{ matrix.java }}
       - name: Build
         run: |
-          ./gradlew -S -Pskip.signing assemble
-          ./gradlew -S -Pskip.signing check
+          ./gradlew -S -Pskip.signing=true assemble
+          ./gradlew -S -Pskip.signing=true check
 
 
