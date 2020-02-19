@@ -21,7 +21,7 @@ ifndef::awestruct[:uri-docs: http://asciidoctor.org/docs]
 :uri-repo: https://github.com/asciidoctor/asciidoctorj-reveal.js
 :uri-issues: {uri-repo}/issues
 :uri-discuss: http://discuss.asciidoctor.org
-:artifact-version: 3.1.0-rc.1
+:artifact-version: 4.0.1
 
 {uri-repo}[AsciidoctorJ Reveal.js] is a convenient repackaging of Asciidoctor Reveal.js for use with {uri-asciidoctorj}[AsciidoctorJ], which brings the Asciidoctor ecosystem to the JVM.
 
