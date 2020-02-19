@@ -42,7 +42,7 @@ public class WhenBackendIsRevealJs {
                 .safe(SafeMode.UNSAFE)
                 .attributes(
                     AttributesBuilder.attributes()
-                        .attribute("revealjsdir", "https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.7.0")
+                        .attribute("revealjsdir", "https://cdn.jsdelivr.net/npm/reveal.js@3.9.2")
                 )
                 .get()
         );
@@ -56,7 +56,7 @@ public class WhenBackendIsRevealJs {
             .map(element -> element.attr("href"))
             .collect(toList());
 
-        assertThat(stylesheets, hasItem("https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.7.0/css/theme/black.css"));
+        assertThat(stylesheets, hasItem("https://cdn.jsdelivr.net/npm/reveal.js@3.9.2/css/theme/black.css"));
 
         Element firstChild = doc.body().children().first();
         assertThat(firstChild.className(), containsString("reveal"));

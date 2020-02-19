@@ -49,7 +49,7 @@ To create slides programmatically using the AsciidoctorJ API use the following c
                 .safe(SafeMode.UNSAFE)
                 .attributes(
                     AttributesBuilder.attributes()
-                        .attribute("revealjsdir", "https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.7.0")
+                        .attribute("revealjsdir", "https://cdn.jsdelivr.net/npm/reveal.js@3.9.2")
                 )
                 .get()
         );
@@ -63,7 +63,7 @@ Using the CLI you can create slides with this call:
 ----
 asciidoctorj --classpath ..asciidoctor-revealjs.jar \
              -b revealjs \
-             -a revealjsdir=https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.7.0 \
+             -a revealjsdir=https://cdn.jsdelivr.net/npm/reveal.js@3.9.2 \
              document.adoc
 ----
 
@@ -85,7 +85,7 @@ To create slides using the Asciidoctor Maven Plugin you can use the following pl
           </requires>
           <attributes>
             <revealjsdir>
-              https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.7.0
+              https://cdn.jsdelivr.net/npm/reveal.js@3.9.2
             </revealjsdir>
           </attributes>
         </configuration>
