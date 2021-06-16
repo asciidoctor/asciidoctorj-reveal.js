@@ -41,7 +41,7 @@ To create slides programmatically using the AsciidoctorJ API use the following c
 
 [source,java,indent="0"]
 ----
-        Asciidoctor asciidoctor = Asciidoctor.Factory().create();
+        Asciidoctor asciidoctor = Asciidoctor.Factory.create();
         asciidoctor.requireLibrary("asciidoctor-revealjs");
         asciidoctor.convertFile(new File("document.adoc"),
             options()
@@ -93,7 +93,7 @@ To create slides using the Asciidoctor Maven Plugin you can use the following pl
           <dependency>
             <groupId>org.asciidoctor</groupId>
             <artifactId>asciidoctorj</artifactId>
-            <version>2.2.0</version>
+            <version>2.4.3</version>
           </dependency>
           <dependency>
             <groupId>org.asciidoctor</groupId>
