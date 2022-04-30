@@ -163,6 +163,7 @@ configure(subprojects.findAll {it.name != 'itest'}) {
 
 }
 
+
 configure(subprojects.findAll { it.name != 'itest'}) {
 
   jruby {
@@ -173,3 +174,4 @@ configure(subprojects.findAll { it.name != 'itest'}) {
   // IMPORTANT The TMP or TEMP environment variable must be set for the gem install command to work on Windows
   processResources.dependsOn jrubyPrepare
 }
+
