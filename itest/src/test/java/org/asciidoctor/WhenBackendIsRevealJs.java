@@ -45,7 +45,7 @@ public class WhenBackendIsRevealJs {
                 .safe(SafeMode.UNSAFE)
                 .attributes(
                     AttributesBuilder.attributes()
-                    .attribute("revealjsdir", "https://cdn.jsdelivr.net/npm/reveal.js@3.9.2")
+                    .attribute("revealjsdir", "https://cdn.jsdelivr.net/npm/reveal.js@4.3.1")
                 )
                 .get()
         );
@@ -60,8 +60,9 @@ public class WhenBackendIsRevealJs {
             .collect(toList());
         assertThat(stylesheets,
             hasItems(
-                "https://cdn.jsdelivr.net/npm/reveal.js@3.9.2/css/reveal.css",
-                "https://cdn.jsdelivr.net/npm/reveal.js@3.9.2/css/theme/black.css"));
+                 //   "https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/reset.css",
+                    "https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/reveal.css",
+                    "https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/theme/black.css"));
 
         Element diagramSlide = doc.selectFirst("#diagram");
         assertThat(diagramSlide, notNullValue());
