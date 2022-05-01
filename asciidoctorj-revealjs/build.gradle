@@ -1,10 +1,10 @@
 dependencies {
-  testCompile ("org.asciidoctor:asciidoctorj:$asciidoctorJVersion") {
+  testImplementation ("org.asciidoctor:asciidoctorj:$asciidoctorJVersion") {
     exclude group:'org.jruby'
   }
 
-  testCompile "org.jruby:jruby-complete:$jrubyVersion"
-  testCompile "org.jsoup:jsoup:$jsoupVersion"
+  testImplementation "org.jruby:jruby-complete:$jrubyVersion"
+  testImplementation "org.jsoup:jsoup:$jsoupVersion"
 
 
   gems("rubygems:asciidoctor-revealjs:5.0.0.rc1") {
@@ -33,18 +33,7 @@ jrubyPrepare {
   }
 }
 
+ext.publicationName = "mavenAsciidoctorJRevealJs"
 
-task sourcesJar(type: Jar, dependsOn: classes) {
-  archiveClassifier = 'sources'
-  from sourceSets.main.allSource
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-  archiveClassifier = 'javadoc'
-  from javadoc.destinationDir
-}
-
-artifacts {
-  archives sourcesJar
-  archives javadocJar
-}
+apply from: rootProject.file('gradle/publish.gradle')
+apply from: rootProject.file('gradle/signing.gradle')

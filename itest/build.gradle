@@ -1,18 +1,15 @@
 dependencies {
 
-  testCompile ("org.asciidoctor:asciidoctorj:$asciidoctorJVersion")
+  testImplementation ("org.asciidoctor:asciidoctorj:$asciidoctorJVersion")
 
-  testCompile "org.jsoup:jsoup:$jsoupVersion"
+  testImplementation "org.jsoup:jsoup:$jsoupVersion"
 
-  testRuntime ("org.asciidoctor:asciidoctorj-diagram:$asciidoctorJDiagramVersion")
-  testRuntime project(':asciidoctorj-revealjs')
+  testRuntimeOnly ("org.asciidoctor:asciidoctorj-diagram:$asciidoctorJDiagramVersion")
+  testRuntimeOnly project(':asciidoctorj-revealjs')
 
 }
 
 jar.enabled = false
-if ( !project.hasProperty('skip.signing') ) {
-  signPom.enabled = false
-}
 
 configurations.all {
   artifacts.clear()
