@@ -7,7 +7,7 @@ dependencies {
   testImplementation "org.jsoup:jsoup:$jsoupVersion"
 
 
-  gems("rubygems:asciidoctor-revealjs:5.0.0.rc1") {
+  gems("rubygems:asciidoctor-revealjs:${project.version}") {
     exclude module: 'asciidoctor'
     exclude module: 'thread_safe'
     // We must lock Prawn to 1.3.0 until AsciidoctorJ upgrades to JRuby 9.0.0.0
