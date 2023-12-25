@@ -46,7 +46,7 @@ ext {
   pdfboxVersion = '1.8.10'
 
   // gem versions
-  asciidoctorJVersion = project.hasProperty('asciidoctorJVersion') ? project.asciidoctorJVersion : '2.5.3'
+  asciidoctorJVersion = project.hasProperty('asciidoctorJVersion') ? project.asciidoctorJVersion : '2.5.11'
   asciidoctorJDiagramVersion = project.hasProperty('asciidoctorJDiagramVersion') ? project.asciidoctorJDiagramVersion : '2.2.1'
   asciidoctorRevealJsGemVersion = project.hasProperty('asciidoctorRevealJsGemVersion') ? project.asciidoctorRevealJsGemVersion : project(':asciidoctorj-revealjs').version.replace('-', '.')
   threadSafeGemVersion = '0.3.6'
