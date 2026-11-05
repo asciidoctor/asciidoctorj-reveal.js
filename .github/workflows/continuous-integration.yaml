@@ -16,16 +16,13 @@ jobs:
       max-parallel: 2
       matrix:
         java:
-          - '11'
-          - '17'
+          - '21'
         os:
           - ubuntu-latest
           - macos-latest
         exclude:
           - os: macos-latest
-            java: '8'
-          - os: macos-latest
-            java: '11'
+            java: '21'
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
@@ -49,7 +46,7 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: 17
+          java-version: 21
       - name: Assemble
         shell: cmd
         run: |
